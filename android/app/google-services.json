@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "320976214264",
+    "project_id": "notifications-test-8c655",
+    "storage_bucket": "notifications-test-8c655.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320976214264:android:904428cd30bb410b7a830d",
+        "android_client_info": {
+          "package_name": "com.fc.notif"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320976214264-oip4hfg48q3sp6366l7hc53t172chiej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fc.notif",
+            "certificate_hash": "18e5f5f753ec8b3b7975a4172b7d7cda20ef3511"
+          }
+        },
+        {
+          "client_id": "320976214264-v7jlb9fuul33rm33uqslklclu8jpshjl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhGzPMdCOaRX1l4-I463aldEE_1am0rOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320976214264-v7jlb9fuul33rm33uqslklclu8jpshjl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
