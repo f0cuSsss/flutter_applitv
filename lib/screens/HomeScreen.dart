@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:myflutter/models/NotificationItem.dart';
-import 'package:myflutter/screens/DetailScreen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:async';
 
@@ -75,17 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => VideoPlayerScreen(
-            url:
-                'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            url: notif.videoUrl,
           ),
         ));
-  }
-
-  _setMessage(Map<String, dynamic> message) {
-    final notification = message['notification'];
-    final data = message['data'];
-    final String title = notification['title'];
-    final String body = notification['body'];
   }
 
   NotificationItem _parseToNotification(Map<String, dynamic> message) {
@@ -131,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       assert(token != null);
       print("Push Messaging token: $token");
     });
-    _firebaseMessaging.subscribeToTopic("matchscore");
+    _firebaseMessaging.subscribeToTopic("applitv");
   }
 
   @override

@@ -135,9 +135,6 @@ class _ControlsOverlay extends StatelessWidget {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                // Using less vertical padding as the text is also longer
-                // horizontally, so it feels like it would need more spacing
-                // horizontally (matching the aspect ratio of the video).
                 vertical: 12,
                 horizontal: 16,
               ),
