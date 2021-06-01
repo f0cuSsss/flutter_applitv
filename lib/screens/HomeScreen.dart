@@ -86,11 +86,15 @@ class _HomeScreenState extends State<HomeScreen> {
   NotificationItem _parseToNotification(Map<String, dynamic> message) {
     final notification = message['notification'];
     final data = message['data'];
-    final String title = notification['title'];
-    final String body = notification['body'];
     print("[Notification obj] ${notification}");
     print("[data obj] ${data}");
-    return NotificationItem(title: title, description: body);
+    return NotificationItem(
+      title: notification['title'],
+      description: notification['body'],
+      bgImgUrl: data['bgImgUrl'],
+      notifImgUrl: data['notifImgUrl'],
+      videoUrl: data['videoUrl'],
+    );
   }
 
   @override

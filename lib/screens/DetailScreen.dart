@@ -21,10 +21,19 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details"),
+        title: Text(_notif.title),
       ),
       body: Center(
-        child: Text('Title of notification is "${_notif.title}"'),
+        child: Column(
+          children: [
+            InkWell(
+              child: Text(_notif.videoUrl == null
+                  ? 'Something went wrong'
+                  : _notif.videoUrl),
+              onTap: () => {},
+            ),
+          ],
+        ),
       ),
     );
   }
