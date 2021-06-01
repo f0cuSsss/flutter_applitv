@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myflutter/models/NotificationItem.dart';
+import 'package:myflutter/screens/VideoPlayerScreen.dart';
 
 class DetailScreen extends StatefulWidget {
   DetailScreen(this.notification);
@@ -24,17 +25,12 @@ class _DetailScreenState extends State<DetailScreen> {
         title: Text(_notif.title),
       ),
       body: Center(
-        child: Column(
-          children: [
-            InkWell(
-              child: Text(_notif.videoUrl == null
-                  ? 'Something went wrong'
-                  : _notif.videoUrl),
-              onTap: () => {},
-            ),
-          ],
-        ),
-      ),
+          child: RaisedButton(
+        child: Text('TAP'),
+        onPressed: () {
+          MaterialPageRoute(builder: (context) => VideoPlayerScreen());
+        },
+      )),
     );
   }
 }

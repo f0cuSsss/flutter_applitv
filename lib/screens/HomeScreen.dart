@@ -4,6 +4,8 @@ import 'package:myflutter/screens/DetailScreen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:async';
 
+import 'package:myflutter/screens/VideoPlayerScreen.dart';
+
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
   if (message.containsKey('data')) {
     // Handle data message
@@ -72,7 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => DetailScreen(notif),
+          builder: (context) => VideoPlayerScreen(
+            url:
+                'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+          ),
         ));
   }
 

@@ -4,6 +4,7 @@ import 'package:myflutter/screens/HomeScreen.dart';
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     ),
   );
