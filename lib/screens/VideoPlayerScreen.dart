@@ -95,53 +95,70 @@ class _ControlsOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        AnimatedSwitcher(
-          duration: Duration(milliseconds: 50),
-          reverseDuration: Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? SizedBox.shrink()
-              : Container(
-                  color: Colors.black26,
-                  child: Center(
-                    child: Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 100.0,
-                    ),
-                  ),
-                ),
-        ),
         GestureDetector(
           onTap: () {
             controller.value.isPlaying ? controller.pause() : controller.play();
           },
         ),
-        Align(
-          alignment: Alignment.topRight,
-          child: PopupMenuButton<double>(
-            initialValue: controller.value.playbackSpeed,
-            tooltip: 'Playback speed',
-            onSelected: (speed) {
-              controller.setPlaybackSpeed(speed);
-            },
-            itemBuilder: (context) {
-              return [
-                for (final speed in _examplePlaybackRates)
-                  PopupMenuItem(
-                    value: speed,
-                    child: Text('${speed}x'),
-                  )
-              ];
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 16,
-              ),
-              child: Text('${controller.value.playbackSpeed}x'),
-            ),
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: 50,
+          color: Colors.blueGrey,
+          child: Column(
+            children: [
+              //     RawMaterialButton(
+              //   shape: CircleBorder(),
+              //   padding: const EdgeInsets.all(10.0),
+              //   focusColor: Colors.grey[600],
+              //   fillColor: Colors.black,
+              //   // autofocus: true,
+              //   child: Icon(
+              //     controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+              //     size: 28,
+              //     color: Colors.white,
+              //   ),
+              //   onPressed: () {
+              //     controller.value.isPlaying
+              //         ? controller.pause()
+              //         : controller.play();
+              //   },
+              // ),
+              // Align(
+              //   alignment: Alignment.topRight,
+              //   child: PopupMenuButton<double>(
+              //     initialValue: controller.value.playbackSpeed,
+              //     tooltip: 'Playback speed',
+              //     onSelected: (speed) {
+              //       controller.setPlaybackSpeed(speed);
+              //     },
+              //     itemBuilder: (context) {
+              //       return [
+              //         for (final speed in _examplePlaybackRates)
+              //           PopupMenuItem(
+              //             value: speed,
+              //             child: Text('${speed}x'),
+              //           )
+              //       ];
+              //     },
+              //     child: Padding(
+              //       padding: const EdgeInsets.symmetric(
+              //         vertical: 12,
+              //         horizontal: 16,
+              //       ),
+              //       child: Text('${controller.value.playbackSpeed}x'),
+              //     ),
+              //   ),
+              // ),
+              // Align(
+              //   alignment: Alignment.topLeft,
+              //   child: IconButton(
+              //     icon: Icon(Icons.close),
+              //     onPressed: () => Navigator.pop(context),
+              //   ),
+              // ),
+            ],
           ),
-        ),
+        )
       ],
     );
   }

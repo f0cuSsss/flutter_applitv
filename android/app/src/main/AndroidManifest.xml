@@ -19,6 +19,7 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
@@ -32,4 +33,10 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <uses-feature android:name="android.software.leanback"
+        android:required="false" />
+
+    <uses-feature android:name="android.hardware.touchscreen"
+            android:required="false" />
 </manifest>
