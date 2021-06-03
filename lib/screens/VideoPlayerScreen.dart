@@ -62,7 +62,7 @@ class _RemoteVideoState extends State<_RemoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  // ClosedCaption(text: _controller.value.caption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -95,68 +95,120 @@ class _ControlsOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        GestureDetector(
-          onTap: () {
-            controller.value.isPlaying ? controller.pause() : controller.play();
-          },
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height,
-          width: 50,
-          color: Colors.blueGrey,
-          child: Column(
-            children: [
-              //     RawMaterialButton(
-              //   shape: CircleBorder(),
-              //   padding: const EdgeInsets.all(10.0),
-              //   focusColor: Colors.grey[600],
-              //   fillColor: Colors.black,
-              //   // autofocus: true,
-              //   child: Icon(
-              //     controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-              //     size: 28,
-              //     color: Colors.white,
-              //   ),
-              //   onPressed: () {
-              //     controller.value.isPlaying
-              //         ? controller.pause()
-              //         : controller.play();
-              //   },
-              // ),
-              // Align(
-              //   alignment: Alignment.topRight,
-              //   child: PopupMenuButton<double>(
-              //     initialValue: controller.value.playbackSpeed,
-              //     tooltip: 'Playback speed',
-              //     onSelected: (speed) {
-              //       controller.setPlaybackSpeed(speed);
-              //     },
-              //     itemBuilder: (context) {
-              //       return [
-              //         for (final speed in _examplePlaybackRates)
-              //           PopupMenuItem(
-              //             value: speed,
-              //             child: Text('${speed}x'),
-              //           )
-              //       ];
-              //     },
-              //     child: Padding(
-              //       padding: const EdgeInsets.symmetric(
-              //         vertical: 12,
-              //         horizontal: 16,
-              //       ),
-              //       child: Text('${controller.value.playbackSpeed}x'),
-              //     ),
-              //   ),
-              // ),
-              // Align(
-              //   alignment: Alignment.topLeft,
-              //   child: IconButton(
-              //     icon: Icon(Icons.close),
-              //     onPressed: () => Navigator.pop(context),
-              //   ),
-              // ),
-            ],
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            height: 60,
+            width: MediaQuery.of(context).size.width * 0.5,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Colors.blueGrey.withOpacity(0.5),
+            ),
+            margin: EdgeInsets.only(top: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                RawMaterialButton(
+                  shape: CircleBorder(),
+                  padding: const EdgeInsets.all(10.0),
+                  focusColor: Colors.grey[600],
+                  fillColor: Colors.black.withOpacity(0.5),
+                  // autofocus: true,
+                  child: Icon(
+                    Icons.close,
+                    size: 28,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                RawMaterialButton(
+                  shape: CircleBorder(),
+                  padding: const EdgeInsets.all(10.0),
+                  focusColor: Colors.grey[600],
+                  fillColor: Colors.black.withOpacity(0.5),
+                  child: Icon(
+                    Icons.fast_rewind,
+                    size: 28,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    controller.seekTo(
+                      Duration(
+                        seconds: controller.value.position.inSeconds + 5,
+                      ),
+                    );
+                  },
+                ),
+                RawMaterialButton(
+                  shape: CircleBorder(),
+                  padding: const EdgeInsets.all(10.0),
+                  focusColor: Colors.grey[600],
+                  fillColor: Colors.black.withOpacity(0.5),
+                  child: Icon(
+                    controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                    size: 28,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    controller.value.isPlaying
+                        ? controller.pause()
+                        : controller.play();
+                  },
+                ),
+                RawMaterialButton(
+                  shape: CircleBorder(),
+                  padding: const EdgeInsets.all(10.0),
+                  focusColor: Colors.grey[600],
+                  fillColor: Colors.black.withOpacity(0.5),
+                  child: Icon(
+                    Icons.fast_forward,
+                    size: 28,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    controller.seekTo(
+                      Duration(
+                        seconds: controller.value.position.inSeconds + 5,
+                      ),
+                    );
+                  },
+                ),
+                // RawMaterialButton(
+                //   shape: CircleBorder(),
+                //   padding: const EdgeInsets.all(10.0),
+                //   focusColor: Colors.grey[600],
+                //   fillColor: Colors.black.withOpacity(0.5),
+                //   // autofocus: true,
+                //   child: PopupMenuButton<double>(
+                //     color: Colors.blueGrey[600],
+                //     initialValue: controller.value.playbackSpeed,
+                //     tooltip: 'Playback speed',
+                //     onSelected: (speed) {
+                //       controller.setPlaybackSpeed(speed);
+                //     },
+                //     itemBuilder: (context) {
+                //       return [
+                //         for (final speed in _examplePlaybackRates)
+                //           PopupMenuItem(
+                //             value: speed,
+                //             child: Text(
+                //               '${speed}x',
+                //               style: TextStyle(color: Colors.white70),
+                //             ),
+                //           )
+                //       ];
+                //     },
+                //     child: Icon(
+                //       Icons.speed,
+                //       size: 28,
+                //       color: Colors.white,
+                //     ),
+                //   ),
+                //   onPressed: () => Navigator.pop(context),
+                // ),
+              ],
+            ),
           ),
         )
       ],
