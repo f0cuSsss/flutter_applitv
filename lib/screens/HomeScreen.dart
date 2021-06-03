@@ -5,7 +5,24 @@ import 'dart:async';
 
 import 'package:myflutter/screens/VideoPlayerScreen.dart';
 
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
+
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
+  print('Handling a background message');
+  // print(message.data);
+  // flutterLocalNotificationsPlugin.show(
+  //     message.data.hashCode,
+  //     message.data['title'],
+  //     message.data['body'],
+  //     NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channel.description,
+  //       ),
+  //     ));
+
   if (message.containsKey('data')) {
     // Handle data message
     final dynamic data = message['data'];

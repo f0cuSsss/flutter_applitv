@@ -28,6 +28,7 @@ dependencies:
   firebase_core: ^0.4.0
   video_player: ^2.1.0
   video_player_tizen: ^1.0.0
+  flutter_local_notifications: any
 
 dev_dependencies:
   flutter_test:
