@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:myflutter/models/Notification.dart' as MODEL;
 
 import 'package:myflutter/screens/VideoPlayerScreen.dart';
+import 'package:myflutter/utils/config.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
@@ -113,12 +114,13 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigateToVideoPlayerByData(MODEL.Notification n) {
     Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VideoPlayerScreen(
-            url: n.videoUrl,
-          ),
-        ));
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPlayerScreen(
+          url: Config.URL + n.videoUrl,
+        ),
+      ),
+    );
   }
 
   MODEL.Notification _parseToNotification(Map<String, dynamic> message) {
@@ -172,30 +174,44 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          notif != null
-              ? SizedBox(width: 0, height: 0)
-              : Center(
-                  child: Column(
-                  children: [
-                    Expanded(
-                      child: LoadingIndicator(
-                        indicatorType: Indicator.pacman,
-                        color: Colors.black,
-                      ),
+      body: notif == null
+          ? Center(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: LoadingIndicator(
+                      indicatorType: Indicator.pacman,
+                      color: Colors.black,
                     ),
-                    Text('Waiting for notifications...',
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.2)
-                  ],
-                )),
-          notif == null
-              ? SizedBox(
-                  width: 0,
-                  height: 0,
-                )
-              : Positioned(
+                  ),
+                  Text(
+                    'Waiting for notifications...',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.2,
+                  ),
+                ],
+              ),
+            )
+          : Stack(
+              children: [
+                notif.bgImgUrl == null || notif.bgImgUrl == ''
+                    ? Image.asset(
+                        'assets/background_main.jpg',
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                      )
+                    : Image.network(
+                        notif.bgImgUrl,
+                        fit: BoxFit.cover,
+                        height: double.infinity,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                      ),
+                Positioned(
                   bottom: 35.0,
                   right: 30.0,
                   child: Container(
@@ -203,8 +219,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 0.5,
+                      ),
                     ),
-                    // height: 130.0,
                     child: Column(
                       children: [
                         ClipRRect(
@@ -236,8 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(notif.title),
+                                    Expanded(child: Text(notif.title)),
                                     InkWell(
+                                      focusColor: Colors.grey[100],
                                       onTap: () async {
                                         if (notif != null)
                                           _navigateToVideoPlayerByData(notif);
@@ -245,18 +265,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Container(
                                         padding: EdgeInsets.all(5.0),
                                         decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.black,
-                                              width: 0.5,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(50.0)),
+                                          border: Border.all(
+                                            color: Colors.black,
+                                            width: 0.3,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(50.0),
+                                        ),
                                         child: Text(
                                           'OK',
                                           style: TextStyle(fontSize: 10.0),
                                         ),
                                       ),
                                     ),
+                                    // RawMaterialButton(
+                                    //   shape: CircleBorder(),
+                                    //   padding: const EdgeInsets.all(-5.0),
+                                    //   focusColor: Colors.grey[100],
+                                    //   fillColor: Colors.white,
+                                    //   // autofocus: true,
+                                    //   child: Text(
+                                    //     'OK',
+                                    //     style: TextStyle(fontSize: 10.0),
+                                    //   ),
+                                    //   onPressed: () {
+                                    //     if (notif != null)
+                                    //       _navigateToVideoPlayerByData(notif);
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                         ),
@@ -264,16 +300,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-          Positioned(
-            child: Text(
-              notif == null || notif.timeLeft == null ? '' : notif.timeLeft,
-              style: TextStyle(fontSize: 40),
+              ],
             ),
-            left: 20,
-            top: 20,
-          )
-        ],
-      ),
     );
   }
 }

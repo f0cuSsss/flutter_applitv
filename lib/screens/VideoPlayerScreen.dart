@@ -41,6 +41,7 @@ class _RemoteVideoState extends State<_RemoteVideo> {
     });
     _controller.setLooping(true);
     _controller.initialize();
+    _controller.play();
   }
 
   @override
@@ -135,7 +136,7 @@ class _ControlsOverlay extends StatelessWidget {
                   onPressed: () {
                     controller.seekTo(
                       Duration(
-                        seconds: controller.value.position.inSeconds + 5,
+                        seconds: controller.value.position.inSeconds - 5,
                       ),
                     );
                   },
