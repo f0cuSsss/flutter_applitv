@@ -280,6 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     SizedBox(width: 5.0),
+                                    // Setuped internet connection
                                     // RawMaterialButton(
                                     //   shape: CircleBorder(),
                                     //   padding: const EdgeInsets.all(-5.0),
