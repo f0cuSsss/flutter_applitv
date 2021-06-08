@@ -255,6 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
+                                    SizedBox(width: 5.0),
                                     Expanded(child: Text(notif.title)),
                                     InkWell(
                                       focusColor: Colors.grey[100],
@@ -278,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
+                                    SizedBox(width: 5.0),
                                     // RawMaterialButton(
                                     //   shape: CircleBorder(),
                                     //   padding: const EdgeInsets.all(-5.0),
