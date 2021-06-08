@@ -4,8 +4,10 @@ import 'package:myflutter/models/Notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:async';
 import 'package:myflutter/models/Notification.dart' as MODEL;
+import 'package:myflutter/screens/NoInternetScreen.dart';
 
 import 'package:myflutter/screens/VideoPlayerScreen.dart';
+import 'package:myflutter/utils/check_internet_connection.dart';
 import 'package:myflutter/utils/config.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -174,137 +176,153 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: notif == null
-          ? Center(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: LoadingIndicator(
-                      indicatorType: Indicator.pacman,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    'Waiting for notifications...',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                  ),
-                ],
-              ),
-            )
-          : Stack(
+      body: FutureBuilder<bool>(
+        future: IsInternetConnected(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (!snapshot.hasData) {
+            return SizedBox(width: 0, height: 0);
+          }
+
+          if (snapshot.data) {
+            return _renderContent();
+          } else {
+            return NoInternetScreen();
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _renderContent() {
+    return notif == null
+        ? Center(
+            child: Column(
               children: [
-                notif.bgImgUrl == null || notif.bgImgUrl == ''
-                    ? Image.asset(
-                        'assets/background_main.jpg',
-                        fit: BoxFit.cover,
-                        height: double.infinity,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                      )
-                    : Image.network(
-                        notif.bgImgUrl,
-                        fit: BoxFit.cover,
-                        height: double.infinity,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                      ),
-                Positioned(
-                  bottom: 35.0,
-                  right: 30.0,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              topRight: Radius.circular(5.0)),
-                          child: notif.notifImgUrl == null ||
-                                  notif.notifImgUrl == ''
-                              ? Image.asset(
-                                  'assets/background_secondary.jpg',
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.center,
-                                )
-                              : Image.network(
-                                  notif.notifImgUrl,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.center,
-                                ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: notif.title == null || notif.title == ''
-                              ? Text(
-                                  'Click',
-                                  style: TextStyle(color: Colors.red[900]),
-                                )
-                              : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(width: 5.0),
-                                    Expanded(child: Text(notif.title)),
-                                    InkWell(
-                                      focusColor: Colors.grey[100],
-                                      onTap: () async {
-                                        if (notif != null)
-                                          _navigateToVideoPlayerByData(notif);
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(5.0),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.black,
-                                            width: 0.3,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(50.0),
-                                        ),
-                                        child: Text(
-                                          'OK',
-                                          style: TextStyle(fontSize: 10.0),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 5.0),
-                                    // Setuped internet connection
-                                    // RawMaterialButton(
-                                    //   shape: CircleBorder(),
-                                    //   padding: const EdgeInsets.all(-5.0),
-                                    //   focusColor: Colors.grey[100],
-                                    //   fillColor: Colors.white,
-                                    //   // autofocus: true,
-                                    //   child: Text(
-                                    //     'OK',
-                                    //     style: TextStyle(fontSize: 10.0),
-                                    //   ),
-                                    //   onPressed: () {
-                                    //     if (notif != null)
-                                    //       _navigateToVideoPlayerByData(notif);
-                                    //   },
-                                    // ),
-                                  ],
-                                ),
-                        ),
-                      ],
-                    ),
+                Expanded(
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.pacman,
+                    color: Colors.black,
                   ),
+                ),
+                Text(
+                  'Waiting for notifications...',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.2,
                 ),
               ],
             ),
-    );
+          )
+        : Stack(
+            children: [
+              notif.bgImgUrl == null || notif.bgImgUrl == ''
+                  ? Image.asset(
+                      'assets/background_main.jpg',
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                    )
+                  : Image.network(
+                      notif.bgImgUrl,
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                    ),
+              Positioned(
+                bottom: 35.0,
+                right: 30.0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 0.5,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(5.0)),
+                        child:
+                            notif.notifImgUrl == null || notif.notifImgUrl == ''
+                                ? Image.asset(
+                                    'assets/background_secondary.jpg',
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.center,
+                                  )
+                                : Image.network(
+                                    notif.notifImgUrl,
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.center,
+                                  ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: notif.title == null || notif.title == ''
+                            ? Text(
+                                'Click',
+                                style: TextStyle(color: Colors.red[900]),
+                              )
+                            : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 5.0),
+                                  Expanded(child: Text(notif.title)),
+                                  InkWell(
+                                    focusColor: Colors.grey[100],
+                                    onTap: () async {
+                                      if (notif != null)
+                                        _navigateToVideoPlayerByData(notif);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(5.0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black,
+                                          width: 0.3,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(50.0),
+                                      ),
+                                      child: Text(
+                                        'OK',
+                                        style: TextStyle(fontSize: 10.0),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 5.0),
+                                  // RawMaterialButton(
+                                  //   shape: CircleBorder(),
+                                  //   padding: const EdgeInsets.all(-5.0),
+                                  //   focusColor: Colors.grey[100],
+                                  //   fillColor: Colors.white,
+                                  //   // autofocus: true,
+                                  //   child: Text(
+                                  //     'OK',
+                                  //     style: TextStyle(fontSize: 10.0),
+                                  //   ),
+                                  //   onPressed: () {
+                                  //     if (notif != null)
+                                  //       _navigateToVideoPlayerByData(notif);
+                                  //   },
+                                  // ),
+                                ],
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 }

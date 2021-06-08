@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myflutter/screens/NoInternetScreen.dart';
+import 'package:myflutter/utils/check_internet_connection.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
@@ -11,7 +13,20 @@ class VideoPlayerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: const ValueKey<String>('video_player'),
-      body: _RemoteVideo(video_url: url),
+      body: FutureBuilder<bool>(
+        future: IsInternetConnected(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (!snapshot.hasData) {
+            return SizedBox(width: 0, height: 0);
+          }
+
+          if (snapshot.data) {
+            return _RemoteVideo(video_url: url);
+          } else {
+            return NoInternetScreen();
+          }
+        },
+      ),
     );
   }
 }
