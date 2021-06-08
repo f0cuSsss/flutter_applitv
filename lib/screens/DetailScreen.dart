@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
-// import 'package:myflutter/models/Notification.dart';
-// import 'package:myflutter/screens/VideoPlayerScreen.dart';
+// import 'package:Applitv/models/Notification.dart';
+// import 'package:Applitv/screens/VideoPlayerScreen.dart';
 
 // class DetailScreen extends StatefulWidget {
 //   DetailScreen(this.notification);

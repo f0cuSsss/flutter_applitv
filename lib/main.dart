@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:myflutter/screens/HomeScreen.dart';
+import 'package:Applitv/screens/HomeScreen.dart';
 
 void main() {
   runApp(

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:myflutter/models/Notification.dart';
+import 'package:Applitv/models/Notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:async';
-import 'package:myflutter/models/Notification.dart' as MODEL;
-import 'package:myflutter/screens/NoInternetScreen.dart';
+import 'package:Applitv/models/Notification.dart' as MODEL;
+import 'package:Applitv/screens/NoInternetScreen.dart';
 
-import 'package:myflutter/screens/VideoPlayerScreen.dart';
-import 'package:myflutter/utils/check_internet_connection.dart';
-import 'package:myflutter/utils/config.dart';
+import 'package:Applitv/screens/VideoPlayerScreen.dart';
+import 'package:Applitv/utils/check_internet_connection.dart';
+import 'package:Applitv/utils/config.dart';
 
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();

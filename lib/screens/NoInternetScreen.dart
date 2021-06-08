@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myflutter/screens/HomeScreen.dart';
+import 'package:Applitv/screens/HomeScreen.dart';
 
 class NoInternetScreen extends StatelessWidget {
   @override
