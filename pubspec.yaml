@@ -30,6 +30,7 @@ dependencies:
   video_player_tizen: ^1.0.0
   flutter_local_notifications: any
   loading_indicator: ^2.1.1
+  provider: any
 
 dev_dependencies:
   flutter_test:

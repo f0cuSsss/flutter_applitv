@@ -1,3 +1,4 @@
+import 'package:Applitv/services/NotificationService.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:Applitv/models/Notification.dart';
@@ -10,37 +11,28 @@ import 'package:Applitv/screens/VideoPlayerScreen.dart';
 import 'package:Applitv/utils/check_internet_connection.dart';
 import 'package:Applitv/utils/config.dart';
 
+import 'package:provider/provider.dart';
+
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
 
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
-  print('Handling a background message');
-  // print(message.data);
-  // flutterLocalNotificationsPlugin.show(
-  //     message.data.hashCode,
-  //     message.data['title'],
-  //     message.data['body'],
-  //     NotificationDetails(
-  //       android: AndroidNotificationDetails(
-  //         channel.id,
-  //         channel.name,
-  //         channel.description,
-  //       ),
-  //     ));
+  NotificationService().instantNotification();
+  // print('Handling a background message');
 
-  if (message.containsKey('data')) {
-    // Handle data message
-    final dynamic data = message['data'];
-    print("[BG, contains key - data] ${data}");
-  }
+  // if (message.containsKey('data')) {
+  //   // Handle data message
+  //   final dynamic data = message['data'];
+  //   print("[BG, contains key - data] ${data}");
+  // }
 
-  if (message.containsKey('notification')) {
-    // Handle notification message
-    final dynamic notification = message['notification'];
-    print("[BG, contains key - notification] ${notification}");
-  }
+  // if (message.containsKey('notification')) {
+  //   // Handle notification message
+  //   final dynamic notification = message['notification'];
+  //   print("[BG, contains key - notification] ${notification}");
+  // }
 
-  print('Exception from bg');
+  // print('Exception from bg');
 }
 
 class HomeScreen extends StatefulWidget {
@@ -143,10 +135,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    Provider.of<NotificationService>(context, listen: false).initialize();
+
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
         _setNotification(message);
+        NotificationService().instantNotification();
         // _showItemDialog(message);
       },
       onBackgroundMessage: myBackgroundMessageHandler,
@@ -157,6 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
         _navigateToVideoPlayerByMessage(message);
+        NotificationService().instantNotification();
       },
     );
     _firebaseMessaging.requestNotificationPermissions(
