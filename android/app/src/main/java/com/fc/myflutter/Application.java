@@ -1,4 +1,4 @@
-package com.fc.myflutter;
+package com.fc.Applitv;
 
 import io.flutter.app.FlutterApplication;
 import io.flutter.plugin.common.PluginRegistry;

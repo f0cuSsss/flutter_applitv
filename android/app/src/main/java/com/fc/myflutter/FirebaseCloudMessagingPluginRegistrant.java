@@ -1,4 +1,4 @@
-package com.fc.myflutter;
+package com.fc.Applitv;
 
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;

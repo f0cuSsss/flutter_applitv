@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:myflutter/screens/NoInternetScreen.dart';
-import 'package:myflutter/utils/check_internet_connection.dart';
+import 'package:Applitv/screens/NoInternetScreen.dart';
+import 'package:Applitv/utils/check_internet_connection.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatelessWidget {

@@ -1,4 +1,4 @@
-package com.fc.myflutter;
+package com.fc.Applitv;
 
 //import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
