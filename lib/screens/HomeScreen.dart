@@ -1,5 +1,6 @@
 import 'package:Applitv/services/NotificationService.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:Applitv/models/Notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,22 +18,8 @@ import 'package:provider/provider.dart';
 //     FlutterLocalNotificationsPlugin();
 
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
-  NotificationService().instantNotification();
-  // print('Handling a background message');
-
-  // if (message.containsKey('data')) {
-  //   // Handle data message
-  //   final dynamic data = message['data'];
-  //   print("[BG, contains key - data] ${data}");
-  // }
-
-  // if (message.containsKey('notification')) {
-  //   // Handle notification message
-  //   final dynamic notification = message['notification'];
-  //   print("[BG, contains key - notification] ${notification}");
-  // }
-
-  // print('Exception from bg');
+  // NotificationService().instantNotification();
+  print('bg notification');
 }
 
 class HomeScreen extends StatefulWidget {
@@ -136,33 +123,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    Provider.of<NotificationService>(context, listen: false).initialize();
+    // Provider.of<NotificationService>(context, listen: false).initialize();
 
     _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        _setNotification(message);
-        NotificationService().instantNotification();
-        // _showItemDialog(message);
-      },
+      // onMessage: (Map<String, dynamic> message) async {
+      //   print("onMessage: $message");
+      //   _setNotification(message);
+      //   NotificationService().instantNotification();
+      // },
       onBackgroundMessage: myBackgroundMessageHandler,
-      onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
-        _navigateToVideoPlayerByMessage(message);
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
-        _navigateToVideoPlayerByMessage(message);
-        NotificationService().instantNotification();
-      },
     );
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(
-            sound: true, badge: true, alert: true, provisional: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
+
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       print("Push Messaging token: $token");
