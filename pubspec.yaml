@@ -31,6 +31,7 @@ dependencies:
   flutter_local_notifications: any
   loading_indicator: ^2.1.1
   provider: any
+  workmanager: ^0.2.3
 
 dev_dependencies:
   flutter_test:
