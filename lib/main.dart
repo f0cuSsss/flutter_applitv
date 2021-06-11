@@ -28,7 +28,6 @@ void main() async {
   //     .resolvePlatformSpecificImplementation<
   //         AndroidFlutterLocalNotificationsPlugin>()
   //     ?.createNotificationChannel(channel);
-
   // flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation().
 
   // WidgetsFlutterBinding.ensureInitialized();

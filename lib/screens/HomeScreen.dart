@@ -119,6 +119,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return n;
   }
 
+// @Override
+// public void onMessageReceived(RemoteMessage remoteMessage) {
+//      Map<String, String> data = remoteMessage.getData();
+//      String myCustomKey = data.get("my_custom_key");
+
+//      // Manage data
+// }
+
   @override
   void initState() {
     super.initState();
@@ -133,7 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
       // },
       onBackgroundMessage: myBackgroundMessageHandler,
     );
-
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       print("Push Messaging token: $token");
