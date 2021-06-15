@@ -24,14 +24,18 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   firebase_analytics: any
-  firebase_messaging: 6.0.9
+  firebase_messaging: any
+  # firebase_messaging: 6.0.9
   firebase_core: ^0.4.0
   video_player: ^2.1.0
   video_player_tizen: ^1.0.0
-  flutter_local_notifications: any
+  # flutter_local_notifications: any
   loading_indicator: ^2.1.1
   provider: any
   workmanager: ^0.2.3
+  android_alarm_manager: ^2.0.2
+  http: ^0.13.3
+  bringtoforeground: ^0.0.2
 
 dev_dependencies:
   flutter_test:

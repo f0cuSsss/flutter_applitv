@@ -1,5 +1,6 @@
 import 'package:Applitv/services/NotificationService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:Applitv/models/Notification.dart';
@@ -39,6 +40,24 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final TextEditingController _topicController =
       TextEditingController(text: 'topic');
+
+  static const MethodChannel _channel =
+      MethodChannel('applitv_notification_channellvl');
+
+  Map<String, String> channelMap = {
+    "id": "CHAT_MESSAGES",
+    "name": "Chats",
+    "description": "Chat notifications",
+  };
+
+  void _createNewChannel() async {
+    try {
+      await _channel.invokeMethod('getBatteryLevel', channelMap);
+      print("Channel created successful");
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
 
   Widget _buildPopupDialog(BuildContext context, MODEL.Notification notif) {
     return AlertDialog(
@@ -130,15 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    _createNewChannel();
     // Provider.of<NotificationService>(context, listen: false).initialize();
 
     _firebaseMessaging.configure(
-      // onMessage: (Map<String, dynamic> message) async {
-      //   print("onMessage: $message");
-      //   _setNotification(message);
-      //   NotificationService().instantNotification();
-      // },
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        _setNotification(message);
+        // NotificationService().instantNotification();
+      },
       onBackgroundMessage: myBackgroundMessageHandler,
     );
     _firebaseMessaging.getToken().then((String token) {
@@ -255,6 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   InkWell(
                                     focusColor: Colors.grey[100],
                                     onTap: () async {
+                                      SystemNavigator.pop();
                                       if (notif != null)
                                         _navigateToVideoPlayerByData(notif);
                                     },
