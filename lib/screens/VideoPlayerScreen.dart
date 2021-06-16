@@ -1,7 +1,9 @@
+import 'package:Applitv/bloc/NotificationBloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Applitv/screens/NoInternetScreen.dart';
 import 'package:Applitv/utils/check_internet_connection.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
@@ -136,7 +138,13 @@ class _ControlsOverlay extends StatelessWidget {
                     size: 28,
                     color: Colors.white,
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  // onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    // NotificationBloc notifBlock = NotificationBloc();
+                    // notifBlock.
+                    // SystemNavigator.pop();
+                    Navigator.pop(context);
+                  },
                 ),
                 RawMaterialButton(
                   shape: CircleBorder(),

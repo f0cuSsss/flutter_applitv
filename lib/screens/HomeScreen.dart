@@ -1,4 +1,6 @@
+import 'package:Applitv/bloc/NotificationBloc.dart';
 import 'package:Applitv/services/NotificationService.dart';
+import 'package:bringtoforeground/bringtoforeground.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -6,7 +8,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:Applitv/models/Notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:async';
-import 'package:Applitv/models/Notification.dart' as MODEL;
+import 'package:Applitv/models/Notification.dart' as Model;
 import 'package:Applitv/screens/NoInternetScreen.dart';
 
 import 'package:Applitv/screens/VideoPlayerScreen.dart';
@@ -15,103 +17,19 @@ import 'package:Applitv/utils/config.dart';
 
 import 'package:provider/provider.dart';
 
-// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//     FlutterLocalNotificationsPlugin();
-
-Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
-  // NotificationService().instantNotification();
-  print('bg notification');
-}
-
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key, this.title}) : super(key: key);
-  final String title;
-  // MODEL.Notification notification = null;
-
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _topicButtonsDisabled = false;
-
-  MODEL.Notification notif = null;
-
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final TextEditingController _topicController =
       TextEditingController(text: 'topic');
+  NotificationBloc notifBlock = NotificationBloc();
 
-  static const MethodChannel _channel =
-      MethodChannel('applitv_notification_channellvl');
-
-  Map<String, String> channelMap = {
-    "id": "CHAT_MESSAGES",
-    "name": "Chats",
-    "description": "Chat notifications",
-  };
-
-  void _createNewChannel() async {
-    try {
-      await _channel.invokeMethod('getBatteryLevel', channelMap);
-      print("Channel created successful");
-    } on PlatformException catch (e) {
-      print(e);
-    }
-  }
-
-  Widget _buildPopupDialog(BuildContext context, MODEL.Notification notif) {
-    return AlertDialog(
-      content: Text(notif.title),
-      actions: <Widget>[
-        FlatButton(
-          child: const Text('Cancel'),
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
-        ),
-        FlatButton(
-          child: const Text('Start the video'),
-          onPressed: () {
-            Navigator.pop(context, true);
-          },
-        ),
-      ],
-    );
-  }
-
-  void _showItemDialog(Map<String, dynamic> message) {
-    var n = _parseToNotification(message);
-    showDialog<bool>(
-      context: context,
-      builder: (_) => _buildPopupDialog(context, n),
-    ).then((bool shouldNavigate) {
-      if (shouldNavigate == true) {
-        _navigateToVideoPlayerByMessage(message);
-      }
-    });
-  }
-
-  void _setNotification(Map<String, dynamic> message) {
-    var n = _parseToNotification(message);
-    setState(() {
-      notif = n;
-    });
-  }
-
-  void _navigateToVideoPlayerByMessage(Map<String, dynamic> message) {
-    final MODEL.Notification notif = _parseToNotification(message);
-    Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VideoPlayerScreen(
-          url: notif.videoUrl,
-        ),
-      ),
-    );
-  }
-
-  void _navigateToVideoPlayerByData(MODEL.Notification n) {
+  void _navigateToVideoPlayerByData(Model.Notification n) {
     Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
     Navigator.push(
       context,
@@ -123,12 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  MODEL.Notification _parseToNotification(Map<String, dynamic> message) {
+  Model.Notification _parseToNotification(Map<String, dynamic> message) {
     final notification = message['notification'];
     final data = message['data'];
     // print("[Notification obj] ${notification}");
     // print("[data obj] ${data}");
-    var n = MODEL.Notification(
+    var n = Model.Notification(
       title: notification['title'],
       // description: notification['body'],
       bgImgUrl: data['bgImgUrl'],
@@ -136,35 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
       videoUrl: data['videoUrl'],
     );
     return n;
-  }
-
-// @Override
-// public void onMessageReceived(RemoteMessage remoteMessage) {
-//      Map<String, String> data = remoteMessage.getData();
-//      String myCustomKey = data.get("my_custom_key");
-
-//      // Manage data
-// }
-
-  @override
-  void initState() {
-    super.initState();
-    _createNewChannel();
-    // Provider.of<NotificationService>(context, listen: false).initialize();
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        _setNotification(message);
-        // NotificationService().instantNotification();
-      },
-      onBackgroundMessage: myBackgroundMessageHandler,
-    );
-    _firebaseMessaging.getToken().then((String token) {
-      assert(token != null);
-      print("Push Messaging token: $token");
-    });
-    _firebaseMessaging.subscribeToTopic("applitv");
   }
 
   @override
@@ -176,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!snapshot.hasData) {
             return SizedBox(width: 0, height: 0);
           }
-
           if (snapshot.data) {
             return _renderContent();
           } else {
@@ -188,136 +76,153 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _renderContent() {
-    return notif == null
-        ? Center(
+    return StreamBuilder<Model.Notification>(
+      stream: notifBlock.notifStream,
+      builder: (context, snapshot) {
+        print("snapshot: ${snapshot.data?.title}");
+
+        if (snapshot.hasData) {
+          Model.Notification notif = snapshot.data;
+          print('snapshot has a data');
+          if (notif.isEmpty) {
+            print(
+                '---[title]--- ${notif.title} [${notif.isTitleEmpty}] ----------');
+            print(
+                '---[bgImgUrl]--- ${notif.bgImgUrl} [${notif.isBgImgUrlEmpty}] ----------');
+            print(
+                '---[notifImgUrl]--- ${notif.notifImgUrl} [${notif.isNotifImgUrlEmpty}] ----------');
+            print(
+                '---[videoUrl]--- ${notif.videoUrl} [${notif.isVideoUrlEmpty}] ----------');
+            print('nullable notification');
+            return _renderWaitingForNotification();
+          } else {
+            Bringtoforeground.bringAppToForeground();
+            print('notification with data');
+            return _renderNotification(notif);
+          }
+        } else {
+          print('snapshot has not a data');
+          return _renderWaitingForNotification();
+        }
+      },
+    );
+  }
+
+  Widget _renderWaitingForNotification() {
+    return Center(
+      child: Column(
+        children: [
+          Expanded(
+            child: LoadingIndicator(
+              indicatorType: Indicator.pacman,
+              color: Colors.black,
+            ),
+          ),
+          Text(
+            'Waiting for notifications...',
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.2,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _renderNotification(notification) {
+    return Stack(
+      children: [
+        notification.bgImgUrl == null || notification.bgImgUrl == ''
+            ? Image.asset(
+                'assets/background_main.jpg',
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
+                alignment: Alignment.center,
+              )
+            : Image.network(
+                notification.bgImgUrl,
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
+                alignment: Alignment.center,
+              ),
+        Positioned(
+          bottom: 35.0,
+          right: 30.0,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.3,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              border: Border.all(
+                color: Colors.black,
+                width: 0.5,
+              ),
+            ),
             child: Column(
               children: [
-                Expanded(
-                  child: LoadingIndicator(
-                    indicatorType: Indicator.pacman,
-                    color: Colors.black,
-                  ),
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(5.0),
+                      topRight: Radius.circular(5.0)),
+                  child: notification.notifImgUrl == null ||
+                          notification.notifImgUrl == ''
+                      ? Image.asset(
+                          'assets/background_secondary.jpg',
+                          fit: BoxFit.contain,
+                          alignment: Alignment.center,
+                        )
+                      : Image.network(
+                          notification.notifImgUrl,
+                          fit: BoxFit.contain,
+                          alignment: Alignment.center,
+                        ),
                 ),
-                Text(
-                  'Waiting for notifications...',
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.2,
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: notification.title == null || notification.title == ''
+                      ? Text(
+                          'Click',
+                          style: TextStyle(color: Colors.red[900]),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 5.0),
+                            Expanded(child: Text(notification.title)),
+                            InkWell(
+                              focusColor: Colors.grey[100],
+                              onTap: () async {
+                                if (notification != null)
+                                  _navigateToVideoPlayerByData(notification);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 0.3,
+                                  ),
+                                  borderRadius: BorderRadius.circular(50.0),
+                                ),
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(fontSize: 10.0),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 5.0),
+                          ],
+                        ),
                 ),
               ],
             ),
-          )
-        : Stack(
-            children: [
-              notif.bgImgUrl == null || notif.bgImgUrl == ''
-                  ? Image.asset(
-                      'assets/background_main.jpg',
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                    )
-                  : Image.network(
-                      notif.bgImgUrl,
-                      fit: BoxFit.cover,
-                      height: double.infinity,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                    ),
-              Positioned(
-                bottom: 35.0,
-                right: 30.0,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5.0),
-                            topRight: Radius.circular(5.0)),
-                        child:
-                            notif.notifImgUrl == null || notif.notifImgUrl == ''
-                                ? Image.asset(
-                                    'assets/background_secondary.jpg',
-                                    fit: BoxFit.contain,
-                                    alignment: Alignment.center,
-                                  )
-                                : Image.network(
-                                    notif.notifImgUrl,
-                                    fit: BoxFit.contain,
-                                    alignment: Alignment.center,
-                                  ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: notif.title == null || notif.title == ''
-                            ? Text(
-                                'Click',
-                                style: TextStyle(color: Colors.red[900]),
-                              )
-                            : Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(width: 5.0),
-                                  Expanded(child: Text(notif.title)),
-                                  InkWell(
-                                    focusColor: Colors.grey[100],
-                                    onTap: () async {
-                                      SystemNavigator.pop();
-                                      if (notif != null)
-                                        _navigateToVideoPlayerByData(notif);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.black,
-                                          width: 0.3,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(50.0),
-                                      ),
-                                      child: Text(
-                                        'OK',
-                                        style: TextStyle(fontSize: 10.0),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 5.0),
-                                  // RawMaterialButton(
-                                  //   shape: CircleBorder(),
-                                  //   padding: const EdgeInsets.all(-5.0),
-                                  //   focusColor: Colors.grey[100],
-                                  //   fillColor: Colors.white,
-                                  //   // autofocus: true,
-                                  //   child: Text(
-                                  //     'OK',
-                                  //     style: TextStyle(fontSize: 10.0),
-                                  //   ),
-                                  //   onPressed: () {
-                                  //     if (notif != null)
-                                  //       _navigateToVideoPlayerByData(notif);
-                                  //   },
-                                  // ),
-                                ],
-                              ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
+          ),
+        ),
+      ],
+    );
   }
 }
