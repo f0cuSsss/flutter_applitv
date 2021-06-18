@@ -1,18 +1,18 @@
 import 'dart:convert';
 
+import 'package:Applitv/utils/config.dart';
+
 class Notification {
   String title = '';
   String bgImgUrl = '';
   String notifImgUrl = '';
   String videoUrl = '';
-  String timeLeft = '';
 
   Notification({
     this.title,
     this.bgImgUrl,
     this.notifImgUrl,
     this.videoUrl,
-    this.timeLeft,
   });
 
   Notification.nullable() {
@@ -20,13 +20,19 @@ class Notification {
     this.bgImgUrl = '';
     this.notifImgUrl = '';
     this.videoUrl = '';
-    this.timeLeft = '';
   }
 
-  bool get isTitleEmpty => title == '';
-  bool get isBgImgUrlEmpty => bgImgUrl == '';
-  bool get isNotifImgUrlEmpty => notifImgUrl == '';
-  bool get isVideoUrlEmpty => videoUrl == '';
+  bool isEqual(Notification second) {
+    return this.title == second.title &&
+        this.bgImgUrl == second.bgImgUrl &&
+        this.notifImgUrl == second.notifImgUrl &&
+        this.videoUrl == second.videoUrl;
+  }
+
+  bool get isTitleEmpty => title == '' || title == null;
+  bool get isBgImgUrlEmpty => bgImgUrl == '' || bgImgUrl == null;
+  bool get isNotifImgUrlEmpty => notifImgUrl == '' || notifImgUrl == null;
+  bool get isVideoUrlEmpty => videoUrl == '' || videoUrl == null;
 
   bool get isEmpty {
     return this.isTitleEmpty &&
@@ -43,7 +49,6 @@ class Notification {
       notifImgUrl:
           'https://img.freepik.com/free-vector/gradient-liquid-abstract-background_52683-60469.jpg?size=626&ext=jpg',
       videoUrl: 'https://site332.tangram-studio.com/uploads/66/35/20/bee.mp4',
-      timeLeft: '10',
     );
   }
 
@@ -53,18 +58,16 @@ class Notification {
   String toJson() => json.encode(toMap());
 
   factory Notification.fromMap(Map<String, dynamic> json) => Notification(
-        title: json["title"],
-        bgImgUrl: json["bg_img_url"],
-        notifImgUrl: json["notif_img_url"],
-        videoUrl: json["video_url"],
-        timeLeft: json["time_left"],
+        title: json["element"]["title"],
+        bgImgUrl: Config.URL + json["element"]["bgImgUrl"],
+        notifImgUrl: Config.URL + json["element"]["notifImgUrl"],
+        videoUrl: Config.URL + json["element"]["videoUrl"],
       );
 
   Map<String, dynamic> toMap() => {
         "title": title,
-        "bg_img_url": bgImgUrl,
-        "notif_img_url": notifImgUrl,
-        "video_url": videoUrl,
-        "time_left": timeLeft,
+        "bgImgUrl": bgImgUrl,
+        "notifImgUrl": notifImgUrl,
+        "videoUrl": videoUrl,
       };
 }

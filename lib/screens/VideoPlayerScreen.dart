@@ -1,9 +1,8 @@
-import 'package:Applitv/bloc/NotificationBloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Applitv/screens/NoInternetScreen.dart';
 import 'package:Applitv/utils/check_internet_connection.dart';
-import 'package:flutter/services.dart';
+import 'package:move_to_background/move_to_background.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerScreen extends StatelessWidget {
@@ -23,7 +22,10 @@ class VideoPlayerScreen extends StatelessWidget {
           }
 
           if (snapshot.data) {
-            return _RemoteVideo(video_url: url);
+            print(url);
+            return _RemoteVideo(
+              video_url: url,
+            );
           } else {
             return NoInternetScreen();
           }
@@ -54,7 +56,7 @@ class _RemoteVideoState extends State<_RemoteVideo> {
     );
 
     _controller.addListener(() {
-      setState(() {});
+      // setState(() {});
     });
     _controller.setLooping(true);
     _controller.initialize();
@@ -138,12 +140,9 @@ class _ControlsOverlay extends StatelessWidget {
                     size: 28,
                     color: Colors.white,
                   ),
-                  // onPressed: () => Navigator.pop(context),
                   onPressed: () {
-                    // NotificationBloc notifBlock = NotificationBloc();
-                    // notifBlock.
-                    // SystemNavigator.pop();
                     Navigator.pop(context);
+                    MoveToBackground.moveTaskToBack();
                   },
                 ),
                 RawMaterialButton(
@@ -198,39 +197,6 @@ class _ControlsOverlay extends StatelessWidget {
                     );
                   },
                 ),
-                // RawMaterialButton(
-                //   shape: CircleBorder(),
-                //   padding: const EdgeInsets.all(10.0),
-                //   focusColor: Colors.grey[600],
-                //   fillColor: Colors.black.withOpacity(0.5),
-                //   // autofocus: true,
-                //   child: PopupMenuButton<double>(
-                //     color: Colors.blueGrey[600],
-                //     initialValue: controller.value.playbackSpeed,
-                //     tooltip: 'Playback speed',
-                //     onSelected: (speed) {
-                //       controller.setPlaybackSpeed(speed);
-                //     },
-                //     itemBuilder: (context) {
-                //       return [
-                //         for (final speed in _examplePlaybackRates)
-                //           PopupMenuItem(
-                //             value: speed,
-                //             child: Text(
-                //               '${speed}x',
-                //               style: TextStyle(color: Colors.white70),
-                //             ),
-                //           )
-                //       ];
-                //     },
-                //     child: Icon(
-                //       Icons.speed,
-                //       size: 28,
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                //   onPressed: () => Navigator.pop(context),
-                // ),
               ],
             ),
           ),

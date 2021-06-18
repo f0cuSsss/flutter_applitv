@@ -1,64 +1,31 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:Applitv/models/Notification.dart';
+import 'package:Applitv/redux/Applistore.dart';
+import 'package:Applitv/redux/action.dart';
+import 'package:Applitv/services/HTTPService.dart';
+import 'package:Applitv/utils/config.dart';
+import 'package:Applitv/utils/reg_array.dart';
 
-// class NotificationService extends ChangeNotifier {
-//   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
+class NotificationService {
+  static Future<Notification> getNotification() async {
+    try {
+      String uri = 'site332.tangram-studio.com';
+      String endpoint = '/api/element/get';
+      return await HTTPService.doGet(Uri.https(Config.authority, endpoint))
+          .then((res) {
+        if (isArray(res.body)) {
+          Applistore().store.dispatch(NotifActions.clear_notification);
+          return Notification.nullable();
+        }
 
-//   Future initialize() async {
-//     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//         FlutterLocalNotificationsPlugin();
+        if (res.statusCode == 200) {
+          final Notification notification = Notification.fromJson(res.body);
+          return notification;
+        }
 
-//     AndroidInitializationSettings androidInitializationSettings =
-//         AndroidInitializationSettings("ic_launcher");
-
-//     IOSInitializationSettings iosInitializationSettings =
-//         IOSInitializationSettings();
-
-//     final InitializationSettings initializationSettings =
-//         InitializationSettings(
-//       android: androidInitializationSettings,
-//       iOS: iosInitializationSettings,
-//     );
-
-//     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-//   }
-
-//   Future instantNotification() async {
-//     var android = AndroidNotificationDetails("id", "channel", "description");
-//     var ios = IOSNotificationDetails();
-//     var platform = NotificationDetails(android: android, iOS: ios);
-
-//     await _flutterLocalNotificationsPlugin.show(
-//       0,
-//       "Demo instant notificationq",
-//       "Tap to do something",
-//       platform,
-//       payload: "Welcome to demo app",
-//     );
-//   }
-
-//   Future imageNotification() async {
-//     var bigPicture = BigPictureStyleInformation(
-//       DrawableResourceAndroidBitmap("ic_launcher"),
-//       largeIcon: DrawableResourceAndroidBitmap("ic_launcher"),
-//       contentTitle: "Demo image notification",
-//       summaryText: "This is some text",
-//       htmlFormatContent: true,
-//       htmlFormatContentTitle: true,
-//     );
-
-//     var android = AndroidNotificationDetails("id", "channel", "description",
-//         styleInformation: bigPicture);
-
-//     var platform = NotificationDetails(android: android);
-
-//     await _flutterLocalNotificationsPlugin.show(
-//       0,
-//       "Demo Image notificationq",
-//       "Tap to do something",
-//       platform,
-//       payload: "Welcome to demo app",
-//     );
-//   }
-// }
+        return Notification.nullable();
+      });
+    } catch (err) {
+      return Notification.nullable();
+    }
+  }
+}

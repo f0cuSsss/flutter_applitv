@@ -1,21 +1,11 @@
-import 'package:Applitv/bloc/NotificationBloc.dart';
-import 'package:Applitv/services/NotificationService.dart';
-import 'package:bringtoforeground/bringtoforeground.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:Applitv/models/Notification.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'dart:async';
 import 'package:Applitv/models/Notification.dart' as Model;
 import 'package:Applitv/screens/NoInternetScreen.dart';
-
 import 'package:Applitv/screens/VideoPlayerScreen.dart';
 import 'package:Applitv/utils/check_internet_connection.dart';
-import 'package:Applitv/utils/config.dart';
-
-import 'package:provider/provider.dart';
+import 'package:move_to_background/move_to_background.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,10 +14,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _topicButtonsDisabled = false;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   final TextEditingController _topicController =
       TextEditingController(text: 'topic');
-  NotificationBloc notifBlock = NotificationBloc();
 
   void _navigateToVideoPlayerByData(Model.Notification n) {
     Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
@@ -35,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => VideoPlayerScreen(
-          url: Config.URL + n.videoUrl,
+          url: n.videoUrl,
         ),
       ),
     );
@@ -54,6 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
       videoUrl: data['videoUrl'],
     );
     return n;
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -76,33 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _renderContent() {
-    return StreamBuilder<Model.Notification>(
-      stream: notifBlock.notifStream,
-      builder: (context, snapshot) {
-        print("snapshot: ${snapshot.data?.title}");
-
-        if (snapshot.hasData) {
-          Model.Notification notif = snapshot.data;
-          print('snapshot has a data');
-          if (notif.isEmpty) {
-            print(
-                '---[title]--- ${notif.title} [${notif.isTitleEmpty}] ----------');
-            print(
-                '---[bgImgUrl]--- ${notif.bgImgUrl} [${notif.isBgImgUrlEmpty}] ----------');
-            print(
-                '---[notifImgUrl]--- ${notif.notifImgUrl} [${notif.isNotifImgUrlEmpty}] ----------');
-            print(
-                '---[videoUrl]--- ${notif.videoUrl} [${notif.isVideoUrlEmpty}] ----------');
-            print('nullable notification');
-            return _renderWaitingForNotification();
-          } else {
-            Bringtoforeground.bringAppToForeground();
-            print('notification with data');
-            return _renderNotification(notif);
-          }
-        } else {
-          print('snapshot has not a data');
+    return StoreConnector<Model.Notification, Model.Notification>(
+      converter: (store) => store.state,
+      builder: (context, notification) {
+        if (notification == null || notification.isEmpty) {
           return _renderWaitingForNotification();
+        } else {
+          return _renderNotification(notification);
         }
       },
     );
@@ -133,21 +106,45 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _renderNotification(notification) {
     return Stack(
       children: [
-        notification.bgImgUrl == null || notification.bgImgUrl == ''
-            ? Image.asset(
-                'assets/background_main.jpg',
-                fit: BoxFit.cover,
-                height: double.infinity,
-                width: double.infinity,
-                alignment: Alignment.center,
-              )
-            : Image.network(
-                notification.bgImgUrl,
-                fit: BoxFit.cover,
-                height: double.infinity,
-                width: double.infinity,
-                alignment: Alignment.center,
-              ),
+        Positioned(
+          top: 20,
+          left: 20,
+          child: IconButton(
+            icon: Icon(
+              Icons.close,
+              size: 26,
+            ),
+            onPressed: () {
+              MoveToBackground.moveTaskToBack();
+            },
+            iconSize: 30,
+          ),
+        ),
+        // notification.bgImgUrl == null || notification.bgImgUrl == ''
+        //     ? Image.asset(
+        //         'assets/background_main.jpg',
+        //         fit: BoxFit.cover,
+        //         height: double.infinity,
+        //         width: double.infinity,
+        //         alignment: Alignment.center,
+        //       )
+        //     : Image.network(
+        //         // notification.bgImgUrl,
+        //         'https://www.transparentpng.com/thumb/shadow/7Yqlnf-download-black-holes.png',
+        //         color: Colors.black.withOpacity(0.5),
+        //         fit: BoxFit.cover,
+        //         height: double.infinity,
+        //         width: double.infinity,
+        //         alignment: Alignment.center,
+        //       ),
+        Image.asset(
+          // 'assets/transparent_bg_2.png',
+          'assets/shadow_transparent.png',
+          fit: BoxFit.contain,
+          height: double.infinity,
+          width: double.infinity,
+          alignment: Alignment.center,
+        ),
         Positioned(
           bottom: 35.0,
           right: 30.0,
@@ -184,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.all(4.0),
                   child: notification.title == null || notification.title == ''
                       ? Text(
-                          'Click',
+                          'Something went wrong!',
                           style: TextStyle(color: Colors.red[900]),
                         )
                       : Row(
@@ -193,25 +190,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             SizedBox(width: 5.0),
                             Expanded(child: Text(notification.title)),
-                            InkWell(
-                              focusColor: Colors.grey[100],
-                              onTap: () async {
+                            SizedBox(width: 4.0),
+                            RawMaterialButton(
+                              padding: EdgeInsets.all(0),
+                              shape: CircleBorder(),
+                              constraints: BoxConstraints(
+                                maxWidth: 35,
+                                minWidth: 35,
+                                maxHeight: 35,
+                                minHeight: 35,
+                              ),
+                              onPressed: () {
                                 if (notification != null)
                                   _navigateToVideoPlayerByData(notification);
                               },
-                              child: Container(
-                                padding: EdgeInsets.all(5.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 0.3,
-                                  ),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                                child: Text(
-                                  'OK',
-                                  style: TextStyle(fontSize: 10.0),
-                                ),
+                              child: Icon(
+                                Icons.arrow_forward,
+                                color: Colors.black,
+                                size: 18,
                               ),
                             ),
                             SizedBox(width: 5.0),
