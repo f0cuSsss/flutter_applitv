@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -120,31 +122,29 @@ class _HomeScreenState extends State<HomeScreen> {
             iconSize: 30,
           ),
         ),
-        // notification.bgImgUrl == null || notification.bgImgUrl == ''
-        //     ? Image.asset(
-        //         'assets/background_main.jpg',
-        //         fit: BoxFit.cover,
-        //         height: double.infinity,
-        //         width: double.infinity,
-        //         alignment: Alignment.center,
-        //       )
-        //     : Image.network(
-        //         // notification.bgImgUrl,
-        //         'https://www.transparentpng.com/thumb/shadow/7Yqlnf-download-black-holes.png',
-        //         color: Colors.black.withOpacity(0.5),
-        //         fit: BoxFit.cover,
-        //         height: double.infinity,
-        //         width: double.infinity,
-        //         alignment: Alignment.center,
-        //       ),
-        Image.asset(
-          // 'assets/transparent_bg_2.png',
-          'assets/shadow_transparent.png',
-          fit: BoxFit.contain,
-          height: double.infinity,
-          width: double.infinity,
-          alignment: Alignment.center,
-        ),
+        notification.bgImgUrl == null || notification.bgImgUrl == ''
+            ? Image.asset(
+                'assets/shadow_transparent.png',
+                fit: BoxFit.contain,
+                height: double.infinity,
+                width: double.infinity,
+                alignment: Alignment.center,
+              )
+            : Image.network(
+                notification.bgImgUrl,
+                fit: BoxFit.fill,
+                height: double.infinity,
+                width: double.infinity,
+                alignment: Alignment.center,
+              ),
+        // Image.asset(
+        //   // 'assets/transparent_bg_2.png',
+        //   'assets/shadow_transparent.png',
+        //   fit: BoxFit.contain,
+        //   height: double.infinity,
+        //   width: double.infinity,
+        //   alignment: Alignment.center,
+        // ),
         Positioned(
           bottom: 35.0,
           right: 30.0,
