@@ -61,7 +61,7 @@ class Notification {
         title: json["element"]["title"],
         bgImgUrl: Config.URL + json["element"]["bgImgUrl"],
         notifImgUrl: Config.URL + json["element"]["notifImgUrl"],
-        videoUrl: Config.URL + json["element"]["videoUrl"],
+        videoUrl: json["element"]["videoUrl"],
       );
 
   Map<String, dynamic> toMap() => {

@@ -108,20 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _renderNotification(notification) {
     return Stack(
       children: [
-        Positioned(
-          top: 20,
-          left: 20,
-          child: IconButton(
-            icon: Icon(
-              Icons.close,
-              size: 26,
-            ),
-            onPressed: () {
-              MoveToBackground.moveTaskToBack();
-            },
-            iconSize: 30,
-          ),
-        ),
         notification.bgImgUrl == null || notification.bgImgUrl == ''
             ? Image.asset(
                 'assets/shadow_transparent.png',
@@ -137,6 +123,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 alignment: Alignment.center,
               ),
+        Positioned(
+          top: 20,
+          left: 20,
+          child: IconButton(
+            icon: Icon(
+              Icons.close,
+              size: 26,
+            ),
+            onPressed: () {
+              MoveToBackground.moveTaskToBack();
+            },
+            iconSize: 30,
+          ),
+        ),
         // Image.asset(
         //   // 'assets/transparent_bg_2.png',
         //   'assets/shadow_transparent.png',
