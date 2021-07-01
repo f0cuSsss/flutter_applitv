@@ -37,11 +37,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Model.Notification _parseToNotification(Map<String, dynamic> message) {
     final notification = message['notification'];
     final data = message['data'];
-    // print("[Notification obj] ${notification}");
-    // print("[data obj] ${data}");
     var n = Model.Notification(
       title: notification['title'],
-      // description: notification['body'],
       bgImgUrl: data['bgImgUrl'],
       notifImgUrl: data['notifImgUrl'],
       videoUrl: data['videoUrl'],
@@ -57,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     _homeButtonSubscription = homeButtonEvents.listen((event) {
       MoveToBackground.moveTaskToBack();
-      print('Home button pressed');
     });
     WidgetsBinding.instance.addObserver(this);
   }
@@ -65,7 +61,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void deactivate() {
     super.deactivate();
-    print('============== DEACTIVATE ============');
   }
 
   @override
@@ -76,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (state == AppLifecycleState.detached) {
       MoveToBackground.moveTaskToBack();
     }
-    print('AppLifecycleState state:  $state');
   }
 
   @override
@@ -84,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
     _homeButtonSubscription?.cancel();
-    print('============== DISPOSE ============');
   }
 
   @override
@@ -173,14 +166,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             iconSize: 30,
           ),
         ),
-        // Image.asset(
-        //   // 'assets/transparent_bg_2.png',
-        //   'assets/shadow_transparent.png',
-        //   fit: BoxFit.contain,
-        //   height: double.infinity,
-        //   width: double.infinity,
-        //   alignment: Alignment.center,
-        // ),
         Positioned(
           bottom: 35.0,
           right: 30.0,

@@ -41,16 +41,16 @@ class Notification {
         this.isVideoUrlEmpty;
   }
 
-  static Notification getTestData() {
-    return Notification(
-      title: 'Test title',
-      bgImgUrl:
-          'https://blog.prezi.com/wp-content/uploads/2019/03/jason-leung-479251-unsplash.jpg',
-      notifImgUrl:
-          'https://img.freepik.com/free-vector/gradient-liquid-abstract-background_52683-60469.jpg?size=626&ext=jpg',
-      videoUrl: 'https://site332.tangram-studio.com/uploads/66/35/20/bee.mp4',
-    );
-  }
+  // static Notification getTestData() {
+  //   return Notification(
+  //     title: 'Test title',
+  //     bgImgUrl:
+  //         'https://blog.prezi.com/wp-content/uploads/2019/03/jason-leung-479251-unsplash.jpg',
+  //     notifImgUrl:
+  //         'https://img.freepik.com/free-vector/gradient-liquid-abstract-background_52683-60469.jpg?size=626&ext=jpg',
+  //     videoUrl: 'https://site332.tangram-studio.com/uploads/66/35/20/bee.mp4',
+  //   );
+  // }
 
   factory Notification.fromJson(String str) =>
       Notification.fromMap(json.decode(str));

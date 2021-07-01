@@ -75,7 +75,6 @@ class _RemoteVideoState extends State<_RemoteVideo> {
       child: Column(
         children: <Widget>[
           Container(
-            // padding: const EdgeInsets.all(20),
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,
               child: Stack(

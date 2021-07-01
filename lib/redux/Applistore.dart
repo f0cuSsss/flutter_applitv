@@ -1,4 +1,3 @@
-import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:Applitv/redux/reducer.dart';
 import 'package:Applitv/models/Notification.dart';

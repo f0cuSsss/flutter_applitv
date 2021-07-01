@@ -16,9 +16,7 @@ import 'package:move_to_background/move_to_background.dart';
 void checkNotification(SendPort sendPort) async {
   while (true) {
     await NotificationService.getNotification().then((notification) {
-      print('notification title' + notification.title);
       if (!notification.isEmpty) {
-        print('Not null');
         sendPort.send(notification);
       }
     });
