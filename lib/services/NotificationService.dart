@@ -8,7 +8,8 @@ import 'package:Applitv/utils/reg_array.dart';
 class NotificationService {
   static Future<Notification> getNotification() async {
     try {
-      String uri = 'site332.tangram-studio.com';
+      // String uri = 'site332.tangram-studio.com';
+      String uri = 'applitvmedia.com';
       String endpoint = '/api/element/get';
       return await HTTPService.doGet(Uri.https(Config.authority, endpoint))
           .then((res) {
@@ -19,12 +20,14 @@ class NotificationService {
 
         if (res.statusCode == 200) {
           final Notification notification = Notification.fromJson(res.body);
+          print(notification.title);
           return notification;
         }
 
         return Notification.nullable();
       });
     } catch (err) {
+      print(err);
       return Notification.nullable();
     }
   }

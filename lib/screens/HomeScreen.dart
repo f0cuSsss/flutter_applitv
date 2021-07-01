@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -9,12 +10,14 @@ import 'package:Applitv/screens/VideoPlayerScreen.dart';
 import 'package:Applitv/utils/check_internet_connection.dart';
 import 'package:move_to_background/move_to_background.dart';
 
+import 'package:hardware_buttons/hardware_buttons.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool _topicButtonsDisabled = false;
   final TextEditingController _topicController =
       TextEditingController(text: 'topic');
@@ -46,9 +49,42 @@ class _HomeScreenState extends State<HomeScreen> {
     return n;
   }
 
+  AppLifecycleState _appLifecycleState;
+  StreamSubscription _homeButtonSubscription;
+
   @override
   void initState() {
     super.initState();
+    _homeButtonSubscription = homeButtonEvents.listen((event) {
+      MoveToBackground.moveTaskToBack();
+      print('Home button pressed');
+    });
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    print('============== DEACTIVATE ============');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    setState(() {
+      _appLifecycleState = state;
+    });
+    if (state == AppLifecycleState.detached) {
+      MoveToBackground.moveTaskToBack();
+    }
+    print('AppLifecycleState state:  $state');
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+    _homeButtonSubscription?.cancel();
+    print('============== DISPOSE ============');
   }
 
   @override
