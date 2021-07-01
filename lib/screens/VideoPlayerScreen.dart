@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Applitv/screens/NoInternetScreen.dart';
@@ -5,11 +7,16 @@ import 'package:Applitv/utils/check_internet_connection.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:video_player/video_player.dart';
 
-class VideoPlayerScreen extends StatelessWidget {
+class VideoPlayerScreen extends StatefulWidget {
   String url = "";
 
   VideoPlayerScreen({this.url});
 
+  @override
+  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
+}
+
+class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +29,9 @@ class VideoPlayerScreen extends StatelessWidget {
           }
 
           if (snapshot.data) {
-            print(url);
+            print(widget.url);
             return _RemoteVideo(
-              video_url: url,
+              video_url: widget.url,
             );
           } else {
             return NoInternetScreen();
@@ -47,6 +54,25 @@ class _RemoteVideo extends StatefulWidget {
 class _RemoteVideoState extends State<_RemoteVideo> {
   VideoPlayerController _controller;
 
+  Timer _timer;
+  int crutchVal = 0;
+
+  void startTimer() {
+    _timer = new Timer.periodic(
+      const Duration(milliseconds: 100),
+      (Timer timer) {
+        print('Timer tick!');
+        setState(() {
+          crutchVal += 1;
+        });
+        if (crutchVal == 60) {
+          _timer.cancel();
+          timer.cancel();
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +87,8 @@ class _RemoteVideoState extends State<_RemoteVideo> {
     _controller.setLooping(true);
     _controller.initialize();
     _controller.play();
+
+    startTimer();
   }
 
   @override
